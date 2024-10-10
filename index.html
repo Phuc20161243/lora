@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồ án tốt nghiệp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            display: block; /* Hiển thị theo khối */
+            text-align: left; /* Căn logo về bên trái */
+            padding: 10px 0;
+        }
+        .logo {
+            width: 700px; /* Kích thước logo */
+            display: block; /* Đảm bảo logo hiển thị theo dòng riêng */
+            margin-bottom: 10px; /* Khoảng cách dưới logo */
+        }
+        .title {
+            text-align: center; /* Căn giữa tên đề tài */
+            font-size: 48px; /* Kích thước chữ của tên đề tài */
+            color: rgb(55, 127, 220); /* Màu sắc của tên đề tài */
+        }
+
+        .container {
+            margin: 20px auto;
+            width: 50%;
+            background-color: #e0ffe0; /* Màu nền xanh nhạt */
+            background-image: url('1.png'); /* Thêm hình nền, thay thế bằng đường dẫn hình ảnh */
+            background-size: cover; /* Đảm bảo hình nền bao phủ toàn bộ khu vực */
+            background-position: center; /* Căn giữa hình nền */
+            border: 2px solid #4cafac;
+            padding: 15px;
+            border-radius: 8px; /* Làm tròn các góc của ô */
+        }
+
+        .sensor-grid {
+            display: flex; /* Sử dụng flexbox để sắp xếp các cảm biến theo hàng */
+            flex-wrap: wrap; /* Cho phép các cảm biến chuyển sang hàng tiếp theo nếu không đủ chỗ */
+            justify-content: space-around; /* Căn giữa và tạo khoảng cách đều giữa các cảm biến */
+        }
+        .sensor-info {
+            display: flex; /* Để căn chỉnh tiêu đề, hình ảnh và thông tin theo chiều dọc */
+            flex-direction: column; /* Đặt chiều dọc */
+            align-items: center; /* Căn giữa */
+            margin: 10px; /* Khoảng cách giữa các cảm biến */
+            width: 150px; /* Đặt chiều rộng cho từng khối cảm biến */
+        }
+        .sensor-image {
+            max-width: 100px; /* Thay đổi kích thước hình ảnh cảm biến */
+            display: block;
+            margin-bottom: 10px; /* Khoảng cách dưới hình */
+        }
+        .slider-container {
+            margin: 20px 0;
+            display: inline-block; /* Để sắp xếp thanh trượt theo hàng */
+            width: 200px; /* Đặt kích thước cho các khối thanh trượt */
+            text-align: left; /* Căn trái nội dung */
+        }
+        .slider {
+            width: 100%; /* Đặt chiều rộng thanh trượt */
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        footer table {
+            margin: 0 auto; /* Căn giữa bảng */
+        }
+        td {
+            padding: 10px; /* Khoảng cách giữa các ô trong bảng */
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%; /* Làm tròn ảnh */
+            display: block;
+            margin: 0 auto; /* Căn giữa ảnh trong ô */
+        }
+        h4 {
+            text-align: center; /* Căn giữa văn bản */
+        }
+    </style>
+    <!-- Thêm thư viện Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+</head>
+<body>
+    <header>
+        <img src="logo.jpeg" alt="Logo Trường" class="logo"> <!-- Thay thế logo.png bằng đường dẫn logo của bạn -->
+        <div class="title">Hệ Thống Giám Sát Điều Kiện Môi Trường Thông Qua Lora</div>
+    </header>
+    <div class="container">
+        <div class="sensor-grid">
+            <div class="sensor-info">
+                <h2>Nhiệt Độ</h2>
+                <img src="temp.png" alt="Cảm Biến Nhiệt Độ" class="sensor-image"> <!-- Thay thế dht11_temp.png bằng hình ảnh cảm biến nhiệt độ -->
+                <p>Temperature: <span id="temp">25°C</span></p>
+            </div>
+            <div class="sensor-info">
+                <h2>Độ Ẩm</h2>
+                <img src="humi.png" alt="Cảm Biến Độ Ẩm" class="sensor-image"> <!-- Thay thế dht11_humidity.png bằng hình ảnh cảm biến độ ẩm -->
+                <p>Humidity: <span id="humidity">60%</span></p>
+            </div>
+            <div class="sensor-info">
+                <h2>Gas MQ2</h2>
+                <img src="gas.png" alt="Cảm Biến Gas MQ2" class="sensor-image"> <!-- Thay thế mq2.png bằng đường dẫn hình ảnh MQ2 -->
+                <p>Gas: <span id="gas">Không phát hiện</span></p>
+            </div>
+        </div>
+        <div class="sensor-grid">
+            <div class="sensor-info">
+                <h2>UV</h2>
+                <img src="uv.png" alt="Cảm Biến UV" class="sensor-image"> <!-- Thay thế uv.png bằng đường dẫn hình ảnh UV -->
+                <p>UV Index: <span id="uv">2.5</span></p>
+            </div>
+            <div class="sensor-info">
+                <h2>Bụi</h2>
+                <img src="dust.png" alt="Cảm Biến Bụi" class="sensor-image"> <!-- Thay thế dust.png bằng đường dẫn hình ảnh bụi -->
+                <p>PM2.5: <span id="dust">35 µg/m³</span></p>
+            </div>
+            <div class="sensor-info">
+                <h2>Âm Thanh</h2>
+                <img src="sound.png" alt="Cảm Biến Âm Thanh" class="sensor-image"> <!-- Thay thế sound.png bằng đường dẫn hình ảnh âm thanh -->
+                <p>Âm thanh: <span id="sound">50 dB</span></p>
+            </div>
+        </div>
+        <div class="slider-container">
+            <h2>Gió</h2>
+            <img src="wind.png" alt="Cảm Biến Gió" class="sensor-image"> <!-- Thay thế wind.png bằng đường dẫn hình ảnh cảm biến gió -->
+            <input type="range" min="0" max="100" value="50" class="slider" id="wind">
+            <p>Giá trị: <span id="windValue">50</span></p>
+        </div>
+        <div class="slider-container">
+            <h2>Mưa</h2>
+            <img src="rain.png" alt="Cảm Biến Mưa" class="sensor-image"> <!-- Thay thế rain.png bằng đường dẫn hình ảnh cảm biến mưa -->
+            <input type="range" min="0" max="100" value="50" class="slider" id="rain">
+            <p>Giá trị: <span id="rainValue">50</span></p>
+        </div>
+    </div>
+    <footer> 
+        <table> <!-- thẻ tạo bảng -->
+            <thead> <!--tên mục cột-->  
+                <th>Đoàn Minh Thái</th>
+                <th>Lê Hữu Phúc</th>
+            </thead>
+            <tbody> <!--nội dung cột--> <!--với lần lượt các thẻ td cho từng nội dung từng cột-->
+                <td>
+                    <center>
+                        <img class="avatar" src="Thai.jpg"><br>
+                        <h4 id="f">
+                            MSSV: 201612<br>
+                            Email: 201612@student.hcmute.edu.vn
+                        </h4>
+                    </center>
+                </td>
+                <td>
+                    <center>
+                        <img class="avatar" src="Phuc.jpg"><br>
+                        <h4 id="f">
+                            MSSV: 20161243<br>
+                            Email: 20161243@student.hcmute.edu.vn
+                        </h4>
+                    </center>
+                </td>
+            </tbody>
+        </table>  
+    </footer>
+    
+    <script>
+        // Khởi tạo Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Lấy dữ liệu cảm biến từ Firebase
+        database.ref('sensors/').on('value', (snapshot) => {
+            const data = snapshot.val();
+            document.getElementById('temp').innerText = data.dht11.temperature + ' °C';
+            document.getElementById('humidity').innerText = data.dht11.humidity + '%';
+            document.getElementById('gas').innerText = data.mq2.gas;
+            document.getElementById('uv').innerText = data.uv.index;
+            document.getElementById('dust').innerText = data.dust.pm25 + ' µg/m³';
+            document.getElementById('sound').innerText = data.sound.level + ' dB';
+        });
+
+        // Cập nhật giá trị của thanh trượt cho Cảm biến Gió
+        const windSlider = document.getElementById('wind');
+        const windValue = document.getElementById('windValue');
+        windSlider.oninput = function() {
+            windValue.innerHTML = this.value;
+        };
+
+        // Cập nhật giá trị của thanh trượt cho Cảm biến Mưa
+        const rainSlider = document.getElementById('rain');
+        const rainValue = document.getElementById('rainValue');
+        rainSlider.oninput = function() {
+            rainValue.innerHTML = this.value;
+        };
+    </script>
+</body>
+</html>
